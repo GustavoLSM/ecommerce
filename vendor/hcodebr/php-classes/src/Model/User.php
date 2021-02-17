@@ -341,4 +341,16 @@ class User extends Model
             'cost' => 12
         ]);
     }
+
+    public static function checkLoginExist($login)
+    {
+
+        $sql = new Sql();
+
+        $results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :deslogin", [
+            ':deslogin' => $login
+        ]);
+
+        return (count($results) > 0);
+    }
 }

@@ -69,6 +69,8 @@ $app->get('/cart', function () {
 
     $cart = Cart::getFromSession();
 
+    $cart->checkZipCode();
+
     $page = new Page();
 
     $page->setTpl("cart", [
@@ -179,6 +181,10 @@ $app->post('/login', function () {
 $app->get('/logout', function () {
 
     User::logout();
+
+    Cart::removeToSession();
+
+    session_regenerate_id();
 
     header('Location: /login');
     exit;
