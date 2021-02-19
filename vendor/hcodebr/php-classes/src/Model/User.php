@@ -385,7 +385,7 @@ class User extends Model
         FROM tb_users a 
         INNER JOIN tb_persons b USING(idperson) 
         ORDER BY b.desperson
-        LIMIT {$start}, {$itemsPerPage};");
+        LIMIT $start, $itemsPerPage;");
 
         $resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
 
