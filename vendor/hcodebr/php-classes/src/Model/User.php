@@ -373,4 +373,54 @@ class User extends Model
 
         return $results;
     }
+
+    public static function getPage($page = 1, $itemsPerPage = 3)
+    {
+
+        $start = ($page - 1) * $itemsPerPage;
+
+        $sql = new Sql();
+
+        $results = $sql->select("SELECT SQL_CALC_FOUND_ROWS * 
+        FROM tb_users a 
+        INNER JOIN tb_persons b USING(idperson) 
+        ORDER BY b.desperson
+        LIMIT {$start}, {$itemsPerPage};");
+
+        $resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
+
+        return [
+            "data" => $results,
+            "total" => (int)$resultTotal[0]["nrtotal"],
+            "pages" => ceil($resultTotal[0]["nrtotal"] / $itemsPerPage)
+        ];
+    }
+
+    public static function getPageSearch($search, $page = 1, $itemsPerPage = 3)
+    {
+
+        $start = ($page - 1) * $itemsPerPage;
+
+        $sql = new Sql();
+
+        $results = $sql->select("SELECT SQL_CALC_FOUND_ROWS * 
+        FROM tb_users a 
+        INNER JOIN tb_persons b USING(idperson)
+        WHERE b.desemail = :search OR b.desperson LIKE :searchlike OR a.deslogin LIKE :searchlike
+        ORDER BY b.desperson
+        LIMIT $start, $itemsPerPage;
+        ", [
+            ":search" => $search,
+            ":searchlike" => '%' . $search . '%'
+
+        ]);
+
+        $resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
+
+        return [
+            "data" => $results,
+            "total" => (int)$resultTotal[0]["nrtotal"],
+            "pages" => ceil($resultTotal[0]["nrtotal"] / $itemsPerPage)
+        ];
+    }
 }
